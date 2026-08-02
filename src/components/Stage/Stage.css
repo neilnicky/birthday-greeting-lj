@@ -1,0 +1,302 @@
+/* ═══════════════════════════════════════════════════════════
+   Stage — aspect-locked scene box + unit system
+
+   The whole greeting is composed inside one box with a fixed
+   aspect ratio, scaled to fit the viewport. Every size inside
+   is expressed in `--u` (1% of stage width) or `--v` (1% of
+   stage height), so the composition is pixel-identical from a
+   1366×768 laptop to an 8K television.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Small viewport height where supported — avoids the mobile
+     URL-bar resize jump that plain 100vh causes. */
+  --vp-h: 100vh;
+
+  --stage-ratio: 1.6;
+  --stage-w: min(100vw, calc(var(--vp-h) * var(--stage-ratio)));
+  --stage-h: calc(var(--stage-w) / var(--stage-ratio));
+
+  --u: calc(var(--stage-w) / 100);
+  --v: calc(var(--stage-h) / 100);
+}
+
+@supports (height: 100svh) {
+  :root { --vp-h: 100svh; }
+}
+
+@media (orientation: portrait) {
+  :root { --stage-ratio: var(--stage-ratio-portrait, 0.78); }
+}
+
+/* ── The box itself ── */
+.stage {
+  position: relative;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  flex: 0 0 auto;
+}
+
+/* One full-viewport scroll step. Holds exactly one stage. */
+.scene {
+  position: relative;
+  height: var(--vp-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Felt backdrop — fixed, fills the viewport at any ratio
+   ═══════════════════════════════════════════════════════════ */
+.felt {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--felt);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+/* Seamless fabric grain. stitchTiles keeps the repeat invisible. */
+.felt__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: calc(22 * var(--u)) calc(22 * var(--u));
+}
+
+/* Woven directional streaks — what reads as "felt" rather than "noise". */
+.felt__weave {
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image:
+    repeating-linear-gradient(92deg, rgba(255, 255, 255, 0.5) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(2deg, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 4px);
+}
+
+.felt__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, transparent 38%, var(--felt-shadow) 130%);
+  opacity: 0.62;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Envelope frame — fixed overlay that stays put while cards
+   scroll behind it. Shares the stage box so it always registers
+   with the card underneath.
+   ═══════════════════════════════════════════════════════════ */
+.frame {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--stage-w);
+  height: var(--stage-h);
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* Top flap tips — the wedge peeking out from behind the seal. */
+.frame__flap-tips {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(30 * var(--u));
+  height: calc(9 * var(--v));
+  background: var(--envelope-red);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.35s;
+}
+
+/* Bottom pocket — the two rising corners of the envelope front. */
+.frame__pocket {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(48 * var(--v));
+  opacity: 0;
+  transition: opacity 0.5s ease 0.35s;
+}
+.frame__pocket::before,
+.frame__pocket::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 34%;
+  background: var(--envelope-red);
+}
+.frame__pocket::before {
+  left: 0;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+.frame__pocket::after {
+  right: 0;
+  clip-path: polygon(100% 0, 0 100%, 100% 100%);
+}
+
+.frame.is-open .frame__flap-tips,
+.frame.is-open .frame__pocket { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════
+   Wax seal — travels from screen centre (closed) to the top
+   edge (open) and then stays pinned there for every section.
+   ═══════════════════════════════════════════════════════════ */
+.seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(27 * var(--u));
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: none;
+  background: none;
+  line-height: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 50;
+  transition:
+    top 0.95s cubic-bezier(0.65, 0, 0.35, 1),
+    width 0.95s cubic-bezier(0.65, 0, 0.35, 1),
+    transform 0.95s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.seal svg { display: block; width: 100%; height: auto; }
+
+.seal.is-open {
+  top: calc(var(--seal-top, -2) * var(--v));
+  width: calc(var(--seal-width, 21) * var(--u));
+  transform: translate(-50%, 0);
+  cursor: default;
+}
+
+/* Idle breathing while the envelope is still sealed. */
+.seal__inner {
+  display: block;
+  transform-origin: center;
+  animation: seal-breathe 2.6s ease-in-out infinite;
+}
+.seal.is-open .seal__inner { animation: none; }
+
+@keyframes seal-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+
+.seal:focus-visible {
+  outline: calc(0.5 * var(--u)) solid var(--gold-light);
+  outline-offset: calc(1 * var(--u));
+  border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Closed envelope — fills the viewport, folds open, fades out
+   ═══════════════════════════════════════════════════════════ */
+.closed-envelope {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: var(--envelope-red);
+  transition: opacity 0.55s ease 0.42s, visibility 0s linear 0.97s;
+}
+.closed-envelope.is-open {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.closed-envelope__flap {
+  position: absolute;
+  inset: 0;
+}
+.closed-envelope__flap--left {
+  clip-path: polygon(0 0, 50% 52%, 0 100%);
+  background: var(--envelope-shade);
+  opacity: 0.55;
+}
+.closed-envelope__flap--right {
+  clip-path: polygon(100% 0, 50% 52%, 100% 100%);
+  background: var(--envelope-shade);
+  opacity: 0.35;
+}
+.closed-envelope__flap--bottom {
+  clip-path: polygon(0 100%, 50% 52%, 100% 100%);
+  background: var(--envelope-red);
+  box-shadow: 0 0 calc(6 * var(--u)) rgba(0, 0, 0, 0.12) inset;
+}
+/* Hairline creases along the folds. */
+.closed-envelope__creases {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom right, transparent calc(50% - 1px), rgba(0, 0, 0, 0.1) 50%, transparent calc(50% + 1px)),
+    linear-gradient(to bottom left, transparent calc(50% - 1px), rgba(0, 0, 0, 0.1) 50%, transparent calc(50% + 1px));
+}
+
+/* Top flap folds up and away. */
+.closed-envelope__flap--top {
+  clip-path: polygon(0 0, 100% 0, 50% 52%);
+  background: linear-gradient(180deg, var(--envelope-red), var(--envelope-shade));
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.85s cubic-bezier(0.6, -0.12, 0.35, 1.14);
+  backface-visibility: hidden;
+  z-index: 2;
+}
+.closed-envelope.is-open .closed-envelope__flap--top {
+  transform: rotateX(-176deg);
+}
+
+.closed-envelope__hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(9 * var(--v));
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: calc(2.4 * var(--u));
+  letter-spacing: calc(0.12 * var(--u));
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 calc(0.2 * var(--u)) calc(0.6 * var(--u)) rgba(0, 0, 0, 0.25);
+  animation: hint-bob 2.1s ease-in-out infinite;
+  z-index: 3;
+}
+.closed-envelope.is-open .closed-envelope__hint {
+  opacity: 0;
+  animation: none;
+  transition: opacity 0.3s ease;
+}
+@keyframes hint-bob {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, calc(-0.8 * var(--v))); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Scroll hint — sits on the felt below the card
+   ═══════════════════════════════════════════════════════════ */
+.scroll-hint {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.6 * var(--v));
+  transform: translateX(-50%);
+  z-index: 41;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: calc(1.5 * var(--u));
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  animation: hint-bob 2.1s ease-in-out infinite;
+}
+.scroll-hint.is-visible { opacity: 1; }

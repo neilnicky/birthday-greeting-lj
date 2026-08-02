@@ -1,0 +1,163 @@
+/* ═══════════════════════════════════════════════════════════
+   Component stylesheets (must precede other rules)
+
+   Fonts are NOT imported here — they are config-driven and the
+   <link> is injected at runtime by App.jsx from
+   config.fonts.googleFamilies.
+   ═══════════════════════════════════════════════════════════ */
+@import './components/Stage/Stage.css';
+@import './components/UI/UI.css';
+@import './components/Cards/Cards.css';
+
+/* ── Theme defaults (overridden at runtime from config.theme) ── */
+:root {
+  --felt: #c4202f;
+  --felt-shadow: #8d121d;
+  --envelope-red: #f32c41;
+  --envelope-shade: #d81f33;
+  --card: #b9def2;
+  --card-pink: #d9a6dd;
+  --note-pink: #e9a7c0;
+  --ink-red: #d8323f;
+  --ink-navy: #2c3e6b;
+  --ink-black: #141414;
+  --gold-light: #f5e2a8;
+  --gold: #d9b45c;
+  --gold-dark: #8f6c1e;
+
+  --font-script: 'Sacramento', 'Dancing Script', cursive;
+  --font-hand: 'Coming Soon', 'Patrick Hand', cursive;
+  --font-rounded: 'Baloo 2', system-ui, sans-serif;
+  --font-marker: 'Caveat', cursive;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-hand);
+  color: var(--ink-navy);
+  background: var(--felt);
+  overflow-x: hidden;
+}
+
+/* Sealed envelope on top — nothing scrolls until it is opened. */
+body.is-sealed { overflow: hidden; }
+
+h1, h2, h3, p, ul, dl, dd, figure { margin: 0; padding: 0; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+.deck {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Floating hearts layer (off by default — not in the reference) ── */
+.floating-hearts {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.floating-heart {
+  position: absolute;
+  bottom: -40px;
+  will-change: transform, opacity;
+  animation-name: heart-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes heart-rise {
+  0%   { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translate(var(--drift), -55vh) scale(1); }
+  90%  { opacity: 1; }
+  100% { transform: translate(calc(var(--drift) * -1), -110vh) scale(0.8); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Particle system
+   ═══════════════════════════════════════════════════════════ */
+.particle-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 30;
+}
+.particle-layer--global {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+}
+.particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+}
+.p-circle { border-radius: 50%; }
+.p-square { border-radius: 2px; }
+.p-heart {
+  background-color: var(--p-color);
+  clip-path: polygon(50% 100%, 15% 62%, 5% 40%, 12% 22%, 32% 18%, 50% 32%, 68% 18%, 88% 22%, 95% 40%, 85% 62%);
+}
+.p-petal {
+  background-color: var(--p-color);
+  border-radius: 50% 0 50% 0;
+}
+.p-star {
+  background-color: var(--p-color);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+/* Screen flash on candle blow */
+.wish-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+.wish-flash.is-on { animation: flash 0.32s ease-out; }
+@keyframes flash {
+  0%   { opacity: 0; }
+  40%  { opacity: 0.18; }
+  100% { opacity: 0; }
+}
+
+/* ── Candle flame flicker (shared) ── */
+.flame, .wish-flame {
+  transform-origin: 50% 100%;
+  animation: flicker 0.2s ease-in-out infinite alternate;
+}
+@keyframes flicker {
+  from { transform: scaleY(1) scaleX(1); opacity: 0.92; }
+  to   { transform: scaleY(1.14) scaleX(0.9); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .floating-hearts { display: none; }
+}
