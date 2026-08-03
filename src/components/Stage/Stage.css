@@ -13,7 +13,10 @@
      URL-bar resize jump that plain 100vh causes. */
   --vp-h: 100vh;
 
-  --stage-ratio: 1.6;
+  /* Resolved here, not in JS. App.jsx supplies the two candidate ratios as
+     inline custom properties; if it set --stage-ratio directly the inline
+     style would outrank the portrait media query below and never flip. */
+  --stage-ratio: var(--stage-ratio-landscape, 1.6);
   --stage-w: min(100vw, calc(var(--vp-h) * var(--stage-ratio)));
   --stage-h: calc(var(--stage-w) / var(--stage-ratio));
 
@@ -26,7 +29,7 @@
 }
 
 @media (orientation: portrait) {
-  :root { --stage-ratio: var(--stage-ratio-portrait, 0.78); }
+  :root { --stage-ratio: var(--stage-ratio-portrait, 0.66); }
 }
 
 /* ── The box itself ── */

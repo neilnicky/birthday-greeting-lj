@@ -2,13 +2,17 @@ import { useEffect, useRef } from 'react';
 
 // Compact Spotify embed, pinned bottom-left.
 //
-// This uses Spotify's IFrame API rather than a bare <iframe> because a plain
-// embed URL has no way to start part-way into a track — only the API's
-// controller exposes seek(). The controller is created once the envelope has
-// been opened: breaking the wax seal is a real user gesture, which is the
-// strongest autoplay signal the page can give it. Even so, Spotify usually
-// still needs one tap, and a logged-out listener gets a ~30s preview instead
-// of the full track — in that case the start offset is skipped (see below).
+// This uses Spotify's IFrame API rather than a bare <iframe> so the track can
+// open part-way in: createController takes `startAt` (seconds), which it turns
+// into the embed's `t=` parameter before the iframe ever loads. Seeking after
+// playback begins is far less reliable — the position is only settable once
+// the embed has decided what it is streaming.
+//
+// `theme: 'dark'` is the API's equivalent of the embed URL's `theme=0`.
+//
+// The controller is created once the envelope has been opened: breaking the
+// wax seal is a real user gesture, which is the strongest autoplay signal the
+// page can give it.
 
 const API_SRC = 'https://open.spotify.com/embed/iframe-api/v1';
 
@@ -45,7 +49,7 @@ function getIframeApi() {
   return apiPromise;
 }
 
-export function SpotifyPlayer({ url, label, startSeconds = 0 }) {
+export function SpotifyPlayer({ url, label, startSeconds = 0, height = 80, theme = 'dark' }) {
   const hostRef = useRef(null);
   const uri = spotifyUri(url);
 
@@ -54,36 +58,19 @@ export function SpotifyPlayer({ url, label, startSeconds = 0 }) {
 
     let cancelled = false;
     let controller = null;
-    let didSeek = false;
 
     getIframeApi().then((api) => {
       if (cancelled || !hostRef.current) return;
 
       api.createController(
         hostRef.current,
-        { uri, width: '100%', height: 80 },
+        { uri, width: '100%', height, theme, startAt: startSeconds || undefined },
         (ctrl) => {
           if (cancelled) {
             ctrl.destroy();
             return;
           }
           controller = ctrl;
-
-          if (startSeconds > 0) {
-            ctrl.addListener('playback_update', (event) => {
-              const data = event?.data;
-              if (!data || data.isPaused || didSeek) return;
-
-              // `duration` is milliseconds. A logged-out listener only gets a
-              // ~30s preview clip, so seeking past it would just stall — leave
-              // that case playing from wherever the preview starts.
-              if (!data.duration || data.duration / 1000 <= startSeconds) return;
-
-              didSeek = true;
-              ctrl.seek(startSeconds);
-            });
-          }
-
           // Best effort — silently ignored if the browser blocks it.
           ctrl.play();
         },
@@ -94,7 +81,7 @@ export function SpotifyPlayer({ url, label, startSeconds = 0 }) {
       cancelled = true;
       if (controller) controller.destroy();
     };
-  }, [uri, startSeconds]);
+  }, [uri, startSeconds, height, theme]);
 
   if (!uri) return null;
 

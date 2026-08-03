@@ -138,10 +138,10 @@ const config = {
     spotifyUrl: 'https://open.spotify.com/track/0qvzXomUDJVaUboy2wMfiS',
     spotifyLabel: 'This Town',
     // Skip the intro and open on "If the whole world was watching…".
-    // Only applies when the full track is available — a logged-out listener
-    // gets a ~30s preview, and the player leaves that alone rather than
-    // seeking past the end of it.
+    // Applied as the embed's `t=` parameter before the iframe loads.
     spotifyStartSeconds: 55,
+    spotifyTheme: 'dark',              // 'dark' = Spotify's theme=0
+    spotifyHeight: 80,                 // 80 = compact bar, 352 = full art player
   },
 
   // ── Global UI labels + chrome toggles ──
@@ -187,7 +187,7 @@ const config = {
   // All values below are percentages of the stage width unless noted.
   stage: {
     ratio: 1.6,                        // 16:10, matches the reference recording
-    portraitRatio: 0.78,               // Used when the viewport is taller than wide
+    portraitRatio: 0.66,               // Used when the viewport is taller than wide
     cardWidth: 76,                     // % of stage width
     cardHeight: 84,                    // % of stage height
     cardOffsetY: 5,                    // % of stage height the card sits below centre

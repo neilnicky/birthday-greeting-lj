@@ -79,7 +79,9 @@ function applyTheme({ theme, fonts, stage }) {
     '--font-rounded': fonts.rounded,
     '--font-marker': fonts.marker,
 
-    '--stage-ratio': String(stage.ratio),
+    // Candidates only — Stage.css picks between them per orientation. Setting
+    // --stage-ratio here would beat the portrait media query.
+    '--stage-ratio-landscape': String(stage.ratio),
     '--stage-ratio-portrait': String(stage.portraitRatio),
     '--card-w': String(stage.cardWidth),
     '--card-h': String(stage.cardHeight),
@@ -198,6 +200,8 @@ export default function App() {
           url={config.music.spotifyUrl}
           label={config.music.spotifyLabel}
           startSeconds={config.music.spotifyStartSeconds}
+          theme={config.music.spotifyTheme}
+          height={config.music.spotifyHeight}
         />
       ) : null}
     </>
