@@ -45,15 +45,20 @@ export function QRCodeSection() {
         fallbackText={config.qr.fallbackText}
         isVisible={isVisible}
       />
+      {/* No credit URL configured → plain text, not an anchor pointing nowhere. */}
       {config.credit.show ? (
-        <a
-          className="credit"
-          href={config.credit.url}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          {config.credit.text}
-        </a>
+        config.credit.url ? (
+          <a
+            className="credit"
+            href={config.credit.url}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {config.credit.text}
+          </a>
+        ) : (
+          <span className="credit">{config.credit.text}</span>
+        )
       ) : null}
     </Scene>
   );

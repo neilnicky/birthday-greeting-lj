@@ -9,6 +9,7 @@ import { useSectionNav } from './hooks/useSectionNav';
 import { ProgressBar } from './components/UI/ProgressBar';
 import { SectionDots } from './components/UI/SectionDots';
 import { MusicPlayer } from './components/UI/MusicPlayer';
+import { SpotifyPlayer } from './components/UI/SpotifyPlayer';
 import { ScrollHint } from './components/UI/ScrollHint';
 import { FeltBackdrop } from './components/Stage/FeltBackdrop';
 
@@ -188,6 +189,12 @@ export default function App() {
           playLabel={config.music.playLabel}
           pauseLabel={config.music.pauseLabel}
         />
+      ) : null}
+
+      {/* Mounted only after the seal is broken — that click is the user gesture
+          the embed needs if autoplay is going to work at all. */}
+      {isOpen && !audio.enabled ? (
+        <SpotifyPlayer url={config.music.spotifyUrl} label={config.music.spotifyLabel} />
       ) : null}
     </>
   );

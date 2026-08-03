@@ -21,6 +21,7 @@ export function LoveLetterSection() {
         date={config.date}
         greeting={config.letter.greeting}
         typedText={displayText}
+        signature={config.letter.signature}
         cursorVisible={cursorVisible}
         isComplete={isComplete}
         isVisible={isVisible}

@@ -9,18 +9,13 @@ const config = {
 
   // ── Recipient ──
   name: 'Boyfriend',
-  from: 'Your Love',
-  date: '17.08.2025',
+  date: '04.08.2026',
 
   // ── Envelope section ──
   envelope: {
-    ariaLabel: 'Birthday envelope',
     hintText: 'tap to open ♥',
     scrollHint: 'scroll down ↓',
-    revealDate: '17.08.2025',
-    revealHeading: 'Happy Birthday',
     sealAriaLabel: 'Open the envelope',
-    // revealHeading + name are combined by the container
   },
 
   // ── Birthday card section ──
@@ -33,27 +28,28 @@ const config = {
   // ── Love letter section ──
   letter: {
     ariaLabel: 'Love letter',
-    greeting: 'Dear love,',
+    greeting: 'My Baba,',
     paragraphs: [
-      'Happy Birthday, my love. You make my world a happier place just by being in it. Every moment with you feels warm, fun, and special in its own way.',
-      'On your birthday, I just want you to know how lucky I feel to have you in my life. You deserve all the happiness, love, and success in the world, today and always.',
-      "I can't wait to make more beautiful memories with you. Love you endlessly ♥",
+      'Happy birthday, Monu. Twenty-five years ago the world got a little sweeter — and somehow it ended up handing you to me.',
+      'I’ve watched you stay calm when nothing around you is, and start over on something because "almost right" was never enough. That patient, stubborn heart is the same one you turn on me every day.',
+      'Whatever you’re chasing this year, I’m behind all of it. Happy birthday, my Baba.',
     ],
+    signature: '— Your Liya ♥',
   },
 
   // ── Flowers section ──
   flowers: {
     ariaLabel: 'Flowers for you',
-    heading: 'Here are the flowers for you!!',
+    heading: 'Flowers for you, always ♥',
   },
 
   // ── Wish section ──
   wish: {
     ariaLabel: 'Make a wish',
-    heading: 'Close your eyes and Make a wish!',
+    heading: 'Close your eyes and make a wish',
     subtext: 'Blow out your candle!',
     blowButtonLabel: '✨ Tap to blow ✨',
-    blownMessage: '🎉 Happy Birthday! 🎉',
+    blownMessage: '🎉 Happy 25th, Jesley 🎉',
   },
 
   // ── Photos ──
@@ -61,13 +57,17 @@ const config = {
     filmAriaLabel: 'Film strip of memories',
     galleryAriaLabel: 'Photo gallery',
     heading: 'Me + You =',
-    galleryHeading: 'Our Beautiful Moments',
+    galleryHeading: 'Our beautiful moments',
     addPhotoPlaceholder: 'add photo',
     emptyHint: 'add your favorite photos here ♥',
     items: [
-      // { src: "/photos/photo1.jpg", alt: "Us at the beach" },
-      // { src: "/photos/photo2.jpg", alt: "Coffee date" },
-      // Empty array or objects with empty src = show placeholders
+      // ⚠ NEEDED: drop six images into public/photos/ and fill these in, e.g.
+      //   { src: "/photos/photo1.jpg", alt: "Our first trip together" },
+      // The `alt` is real copy — write it like a caption, not a filename.
+      // A src pointing at a file that doesn't exist renders a broken image, so
+      // leave these empty until the photos are actually in place.
+      // If the photos don't make it in time, set `filmStrip` and `photoGallery`
+      // to enabled: false below rather than shipping "add photo" placeholders.
       { src: '', alt: '' },
       { src: '', alt: '' },
       { src: '', alt: '' },
@@ -80,44 +80,50 @@ const config = {
   // ── Reasons I love you ──
   loveJar: {
     ariaLabel: 'Jar of reasons',
-    heading: 'Reasons why i love you',
+    heading: 'Reasons why I love you',
     reasons: [
-      "You're always there for me",
-      "You're a good listener",
-      'The way you help others',
-      "You're my greatest supporter",
-      'You smell so so good',
-      "You're beautiful in & out",
+      // Keep these short — the jar note is a fixed 24u-wide slip, so anything
+      // much past ~35 characters spills out of it.
+      'How calm you stay in the chaos',
+      'You never leave things half-done',
+      'You feed everyone before yourself',
+      'How you light up about your work',
+      'Tired, and still asking about me',
+      'You love with everything you have',
     ],
   },
 
   // ── Coupon ──
   coupon: {
     ariaLabel: 'Love coupon',
-    title: 'FREE KISSES',
-    forLine: 'For my love',
+    // Ticket is a fixed 56u wide; the title must stay on one line or it
+    // wraps into `forLine` below it. Keep it to ~12 characters.
+    title: 'DAY OFF DUTY',
+    forLine: 'For my Baba',
     usesLabel: 'Uses',
-    usesValue: 'Unlimited',
+    usesValue: 'Whenever',
     expiryLabel: 'Expiry',
     expiryValue: 'Never',
-    stampText: '♥ APPROVED ♥ APPROVED ',
   },
 
   // ── Claw machine ──
   claw: {
     ariaLabel: 'Claw machine',
-    intro: 'In the world of,',
+    intro: 'In a world of,',
     subtitle: 'but you are a:',
     gemText: 'GEM',
-    traits: ['Cheater', 'Toxic Bf', 'Gaslighter', 'Narcissist'],
+    // Order matters: ClawMachine's PILE puts index 0 and 3 on the small hearts,
+    // 1 and 2 on the big ones. Long labels go in the middle.
+    traits: ['Frozen', 'Store-bought', 'Instant mix', 'Rushed'],
   },
 
   // ── QR Code ──
   qr: {
     ariaLabel: 'QR code',
-    heading: 'Scan the QR code!',
-    subtext: 'with love, always ♥',
-    url: 'https://example.com',       // URL encoded into the QR
+    heading: 'All our memories, in one place',
+    // ⚠ NEEDED: paste the shared photo album link here (Google Photos / Drive).
+    // While this is empty the card shows `fallbackText` instead of a QR.
+    url: '',
     fallbackText: 'Set your URL in config to generate QR',
   },
 
@@ -127,6 +133,14 @@ const config = {
     autoplayOnOpen: false,             // Start playing when envelope opens
     playLabel: 'Play background music',
     pauseLabel: 'Pause background music',
+
+    // ⚠ NEEDED: paste the Spotify track link here, e.g.
+    //   https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
+    // Empty = no player rendered at all.
+    // Note: Spotify's embed will very likely need one tap to start — browsers
+    // block cross-origin autoplay, and logged-out listeners get a 30s preview.
+    spotifyUrl: '',
+    spotifyLabel: 'Our song',
   },
 
   // ── Global UI labels + chrome toggles ──
@@ -187,8 +201,8 @@ const config = {
   // ── Branding / Credit ──
   credit: {
     show: true,
-    text: 'Made with ♥ by Liyaa',
-    url: 'https://neilnicholas.xyz',
+    text: 'Made with ♥ by Liyaa  ',
+    url: '',                           // Empty = plain text, not a link.
   },
 
   // ── Theme ──
