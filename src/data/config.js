@@ -61,19 +61,16 @@ const config = {
     addPhotoPlaceholder: 'add photo',
     emptyHint: 'add your favorite photos here ♥',
     items: [
-      // ⚠ NEEDED: drop six images into public/photos/ and fill these in, e.g.
-      //   { src: "/photos/photo1.jpg", alt: "Our first trip together" },
-      // The `alt` is real copy — write it like a caption, not a filename.
+      // Files live in public/assets/, so `src` is "/assets/<filename>".
+      // The `alt` is real copy — it reads as a caption, not a filename.
       // A src pointing at a file that doesn't exist renders a broken image, so
-      // leave these empty until the photos are actually in place.
-      // If the photos don't make it in time, set `filmStrip` and `photoGallery`
-      // to enabled: false below rather than shipping "add photo" placeholders.
-      { src: '', alt: '' },
-      { src: '', alt: '' },
-      { src: '', alt: '' },
-      { src: '', alt: '' },
-      { src: '', alt: '' },
-      { src: '', alt: '' },
+      // swap the filename and the caption together when replacing a photo.
+      { src: '/assets/PHOTO-2026-08-04-00-32-02.jpg', alt: 'My birthday, and you looking at me like that' },
+      { src: '/assets/PHOTO-2026-08-04-00-31-18.jpg', alt: 'That night with a thousand candles around us' },
+      { src: '/assets/PHOTO-2026-08-04-00-34-48.jpg', alt: 'Just us, under the trees' },
+      { src: '/assets/PHOTO-2026-08-04-00-34-24.jpg', alt: 'Stealing a kiss, like always' },
+      { src: '/assets/PHOTO-2026-08-04-00-32-49.jpg', alt: 'The night you turned up holding flowers' },
+      { src: '/assets/PHOTO-2026-08-04-00-35-38.jpg', alt: 'Silly mirror selfies with you' },
     ],
   },
 

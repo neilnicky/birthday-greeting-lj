@@ -17,6 +17,10 @@
   box-shadow:
     0 calc(1.6 * var(--u)) calc(5 * var(--u)) rgba(0, 0, 0, 0.3),
     0 calc(0.2 * var(--u)) calc(0.8 * var(--u)) rgba(0, 0, 0, 0.18);
+  /* Hard guard: whatever the stage maths produces, the sheet never spills off
+     the viewport and clips its own border. */
+  max-width: calc(100vw - 4 * var(--u));
+  max-height: var(--vp-h);
   overflow: hidden;
   z-index: 10;
 
@@ -88,7 +92,8 @@
     linear-gradient(72deg, transparent 62%, rgba(120, 150, 175, 0.12) 64%, transparent 66%);
 }
 
-/* ── Doodle border ── */
+/* ── Doodle border ──
+   Two artworks ship; only the one matching the card's orientation is shown. */
 .doodle-frame {
   position: absolute;
   inset: 0;
@@ -96,6 +101,11 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+.doodle-frame--portrait { display: none; }
+@media (orientation: portrait) {
+  .doodle-frame--landscape { display: none; }
+  .doodle-frame--portrait { display: block; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -981,15 +991,21 @@
    ═══════════════════════════════════════════════════════════ */
 @media (orientation: portrait) {
   .card {
-    width: calc(88 * var(--u));
-    height: calc(82 * var(--v));
+    width: calc(84 * var(--u));
+    height: calc(80 * var(--v));
   }
 
+  .birthday-card__heading { top: calc(26 * var(--v)); }
   .birthday-card__line-1,
-  .birthday-card__line-2 { font-size: calc(12 * var(--u)); }
+  .birthday-card__line-2 { font-size: calc(9 * var(--u)); }
   .birthday-card__line-2 { margin-left: 0; }
-  .birthday-card__tulip { width: calc(24 * var(--u)); }
-  .birthday-card__cake { width: calc(28 * var(--u)); }
+  .birthday-card__hearts { top: calc(15 * var(--v)); right: calc(8 * var(--u)); width: calc(14 * var(--u)); }
+  .birthday-card__scene { height: calc(30 * var(--v)); }
+  .birthday-card__tulip { width: calc(22 * var(--u)); }
+  .birthday-card__tulip--left  { left: calc(6 * var(--u)); }
+  .birthday-card__tulip--right { right: calc(6 * var(--u)); }
+  .birthday-card__cake { width: calc(26 * var(--u)); }
+  .card__date { top: calc(11 * var(--v)); }
 
   .love-letter__greeting { width: calc(72 * var(--u)); left: calc(8 * var(--u)); }
   .love-letter__greeting h2 { font-size: calc(12 * var(--u)); }

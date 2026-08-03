@@ -2,8 +2,10 @@
 // a wavy line down each side, round cursive loops at the corners, and a tapered
 // squiggle under the bottom edge.
 //
-// Drawn in a 1520×1000 viewBox that matches the card's aspect ratio, so it
-// scales uniformly with the stage and never skews.
+// Two layouts are emitted — one drawn for the landscape card, one for the
+// portrait card — and CSS shows whichever matches the current orientation.
+// A single artwork cannot serve both: `meet` would float the border in the
+// middle of the card and `none` would squash the loops into ovals.
 
 const f = (n) => Number(n.toFixed(1));
 
@@ -34,82 +36,86 @@ function wave(points) {
   return d;
 }
 
-const LEFT_EDGE = wave([
-  [108, 62],
-  [66, 150],
-  [112, 232],
-  [70, 312],
-  [104, 392],
-  [88, 438],
-]);
+// ── Landscape card: 1520 × 1000 ──
+const LANDSCAPE = {
+  viewBox: '0 0 1520 1000',
+  stroke: 4.6,
+  squiggleStroke: 5.4,
+  runs: [
+    wave([[116, 66], [196, 44], [300, 58], [430, 40], [700, 46], [1000, 38], [1150, 58], [1290, 40], [1400, 92]]),
+    wave([[108, 62], [66, 150], [112, 232], [70, 312], [104, 392], [88, 438]]),
+    wave([[1412, 96], [1456, 178], [1408, 262], [1452, 344], [1414, 424], [1430, 470]]),
+  ],
+  squiggle: wave([[612, 928], [700, 906], [800, 934], [900, 908], [986, 926]]),
+  loops: [
+    [246, 88, 40, 44],
+    [352, 84, 42, 46],
+    [1188, 88, 38, 42],
+    [1298, 80, 42, 46],
+    [80, 448, 20, 20],
+    [1436, 482, 22, 22],
+    [1176, 912, 40, 44],
+    [1288, 898, 42, 46],
+  ],
+};
 
-const RIGHT_EDGE = wave([
-  [1412, 96],
-  [1456, 178],
-  [1408, 262],
-  [1452, 344],
-  [1414, 424],
-  [1430, 470],
-]);
+// ── Portrait card: 1000 × 1520. Same vocabulary, re-laid-out so the loops sit
+// in the corners of a tall sheet and the side waves run its full height. ──
+const PORTRAIT = {
+  viewBox: '0 0 1000 1520',
+  stroke: 6.4,
+  squiggleStroke: 7.4,
+  runs: [
+    wave([[112, 74], [220, 46], [360, 62], [560, 44], [740, 60], [860, 44], [916, 104]]),
+    wave([[104, 70], [58, 220], [110, 380], [62, 540], [104, 700], [84, 792]]),
+    wave([[924, 110], [968, 268], [916, 428], [964, 588], [922, 748], [938, 840]]),
+  ],
+  squiggle: wave([[330, 1418], [450, 1392], [560, 1424], [670, 1396], [760, 1416]]),
+  loops: [
+    [230, 96, 44, 50],
+    [346, 90, 46, 52],
+    [700, 96, 42, 48],
+    [812, 88, 46, 52],
+    [74, 812, 24, 24],
+    [946, 862, 26, 26],
+    [700, 1402, 44, 50],
+    [814, 1386, 46, 52],
+  ],
+};
 
-const TOP_RUN = wave([
-  [116, 66],
-  [196, 44],
-  [300, 58],
-  [430, 40],
-  [700, 46],
-  [1000, 38],
-  [1150, 58],
-  [1290, 40],
-  [1400, 92],
-]);
-
-const BOTTOM_SQUIGGLE = wave([
-  [612, 928],
-  [700, 906],
-  [800, 934],
-  [900, 908],
-  [986, 926],
-]);
-
-export function DoodleFrame({ color = 'var(--ink-red)', opacity = 1 }) {
+function Frame({ layout, color, opacity, className }) {
   return (
     <svg
-      className="doodle-frame"
-      viewBox="0 0 1520 1000"
+      className={`doodle-frame ${className}`}
+      viewBox={layout.viewBox}
       fill="none"
       aria-hidden="true"
       focusable="false"
     >
       <g
         stroke={color}
-        strokeWidth="4.6"
+        strokeWidth={layout.stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
         opacity={opacity}
       >
-        {/* Running lines */}
-        <path d={TOP_RUN} />
-        <path d={LEFT_EDGE} />
-        <path d={RIGHT_EDGE} />
-        <path d={BOTTOM_SQUIGGLE} strokeWidth="5.4" />
-
-        {/* Top-left pair */}
-        <path d={loop(246, 88, 40, 44)} />
-        <path d={loop(352, 84, 42, 46)} />
-
-        {/* Top-right pair */}
-        <path d={loop(1188, 88, 38, 42)} />
-        <path d={loop(1298, 80, 42, 46)} />
-
-        {/* Terminal curls on the side waves */}
-        <path d={loop(80, 448, 20, 20)} />
-        <path d={loop(1436, 482, 22, 22)} />
-
-        {/* Bottom-right pair */}
-        <path d={loop(1176, 912, 40, 44)} />
-        <path d={loop(1288, 898, 42, 46)} />
+        {layout.runs.map((d) => (
+          <path key={d.slice(0, 24)} d={d} />
+        ))}
+        <path d={layout.squiggle} strokeWidth={layout.squiggleStroke} />
+        {layout.loops.map(([cx, cy, rx, ry]) => (
+          <path key={`${cx}-${cy}`} d={loop(cx, cy, rx, ry)} />
+        ))}
       </g>
     </svg>
+  );
+}
+
+export function DoodleFrame({ color = 'var(--ink-red)', opacity = 1 }) {
+  return (
+    <>
+      <Frame layout={LANDSCAPE} color={color} opacity={opacity} className="doodle-frame--landscape" />
+      <Frame layout={PORTRAIT} color={color} opacity={opacity} className="doodle-frame--portrait" />
+    </>
   );
 }
