@@ -5,6 +5,7 @@ export function Scene({ id, ariaLabel, sectionRef, children }) {
   return (
     <section
       ref={sectionRef}
+      id={id}
       className="scene"
       data-section={id}
       aria-label={ariaLabel}

@@ -100,7 +100,9 @@
   transform: translate(-50%, -50%);
   width: var(--stage-w);
   height: var(--stage-h);
-  z-index: 40;
+  /* Above .closed-envelope so the seal rides on top of the sealed sheet and
+     can travel continuously from its centre to the top of the screen. */
+  z-index: 50;
   pointer-events: none;
 }
 
@@ -110,8 +112,8 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(30 * var(--u));
-  height: calc(9 * var(--v));
+  width: calc(38 * var(--u));
+  height: calc(11 * var(--v));
   background: var(--envelope-red);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   opacity: 0;
@@ -124,7 +126,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: calc(48 * var(--v));
+  height: calc(var(--pocket-h, 30) * var(--v));
   opacity: 0;
   transition: opacity 0.5s ease 0.35s;
 }
@@ -134,7 +136,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 34%;
+  width: calc(var(--pocket-w, 33) * 1%);
   background: var(--envelope-red);
 }
 .frame__pocket::before {
@@ -153,11 +155,14 @@
    Wax seal — travels from screen centre (closed) to the top
    edge (open) and then stays pinned there for every section.
    ═══════════════════════════════════════════════════════════ */
+/* The reference seal is a wide oval, not a circle, so width and height are set
+   independently and the artwork is allowed to stretch to fill. */
 .seal {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: calc(27 * var(--u));
+  width: calc(33 * var(--u));
+  height: calc(32 * var(--v));
   transform: translate(-50%, -50%);
   padding: 0;
   border: none;
@@ -165,17 +170,34 @@
   line-height: 0;
   pointer-events: auto;
   cursor: pointer;
-  z-index: 50;
+  z-index: 2;
   transition:
     top 0.95s cubic-bezier(0.65, 0, 0.35, 1),
     width 0.95s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.95s cubic-bezier(0.65, 0, 0.35, 1),
     transform 0.95s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.seal svg { display: block; width: 100%; height: auto; }
+.seal svg,
+.seal img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* The procedural seal carried its own drop shadow in the SVG filter chain; the
+   photographic one has no shadow of its own (the reference's was neutral grey
+   and got keyed out), so it gets an equivalent here. object-fit is stated
+   explicitly because the seal box is deliberately wider than the artwork —
+   filling it is the same stretch the SVG did with preserveAspectRatio="none". */
+.seal img {
+  object-fit: fill;
+  filter: drop-shadow(0 calc(0.5 * var(--v)) calc(0.7 * var(--v)) rgba(0, 0, 0, 0.42));
+}
+.seal__inner { width: 100%; height: 100%; }
 
 .seal.is-open {
-  top: calc(var(--seal-top, -2) * var(--v));
-  width: calc(var(--seal-width, 21) * var(--u));
+  top: calc(var(--seal-top, 1) * var(--v));
+  width: calc(var(--seal-width, 28) * var(--u));
+  height: calc(var(--seal-height, 27) * var(--v));
   transform: translate(-50%, 0);
   cursor: default;
 }

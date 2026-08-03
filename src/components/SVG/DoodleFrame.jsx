@@ -7,13 +7,14 @@
 
 const f = (n) => Number(n.toFixed(1));
 
-// A round cursive loop sitting on the running line.
+// A round cursive loop sitting on the running line. Wide control handles keep
+// the bulb circular, with just a small pinch where the stroke crosses itself.
 function loop(cx, cy, rx, ry) {
   const bottom = cy + ry;
   return (
     `M ${f(cx)} ${f(bottom)}` +
-    ` C ${f(cx - rx * 1.35)} ${f(cy + ry * 0.25)} ${f(cx - rx * 0.95)} ${f(cy - ry)} ${f(cx)} ${f(cy - ry)}` +
-    ` C ${f(cx + rx * 0.95)} ${f(cy - ry)} ${f(cx + rx * 1.35)} ${f(cy + ry * 0.25)} ${f(cx)} ${f(bottom)}`
+    ` C ${f(cx - rx * 1.55)} ${f(cy + ry * 0.6)} ${f(cx - rx * 1.3)} ${f(cy - ry * 0.95)} ${f(cx)} ${f(cy - ry)}` +
+    ` C ${f(cx + rx * 1.3)} ${f(cy - ry * 0.95)} ${f(cx + rx * 1.55)} ${f(cy + ry * 0.6)} ${f(cx)} ${f(bottom)}`
   );
 }
 
@@ -94,20 +95,20 @@ export function DoodleFrame({ color = 'var(--ink-red)', opacity = 1 }) {
         <path d={BOTTOM_SQUIGGLE} strokeWidth="5.4" />
 
         {/* Top-left pair */}
-        <path d={loop(246, 92, 40, 54)} />
-        <path d={loop(352, 88, 42, 58)} />
+        <path d={loop(246, 88, 40, 44)} />
+        <path d={loop(352, 84, 42, 46)} />
 
         {/* Top-right pair */}
-        <path d={loop(1204, 92, 38, 52)} />
-        <path d={loop(1316, 84, 44, 60)} />
+        <path d={loop(1188, 88, 38, 42)} />
+        <path d={loop(1298, 80, 42, 46)} />
 
         {/* Terminal curls on the side waves */}
-        <path d={loop(80, 452, 22, 22)} />
-        <path d={loop(1436, 486, 24, 24)} />
+        <path d={loop(80, 448, 20, 20)} />
+        <path d={loop(1436, 482, 22, 22)} />
 
         {/* Bottom-right pair */}
-        <path d={loop(1176, 918, 40, 54)} />
-        <path d={loop(1288, 902, 42, 56)} />
+        <path d={loop(1176, 912, 40, 44)} />
+        <path d={loop(1288, 898, 42, 46)} />
       </g>
     </svg>
   );

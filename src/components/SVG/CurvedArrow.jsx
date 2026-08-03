@@ -10,8 +10,8 @@ export function CurvedArrow({ color = 'var(--ink-red)', drawn = true, className 
       focusable="false"
     >
       <g stroke={color} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
-        <path className="curved-arrow__shaft" d="M124 14 C132 66 106 116 44 140" />
-        <path className="curved-arrow__head" d="M64 138 L42 141 L50 120" />
+        <path className="curved-arrow__shaft" pathLength="1" d="M124 14 C132 66 106 116 44 140" />
+        <path className="curved-arrow__head" pathLength="1" d="M64 138 L42 141 L50 120" />
       </g>
     </svg>
   );

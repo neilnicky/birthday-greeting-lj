@@ -136,6 +136,9 @@ const config = {
     navLabel: 'Jump to section',
     showDots: true,
     showProgressBar: false,
+    // The reference card has no scroll cue once the envelope is open — the
+    // card fills the screen edge to edge and there is nowhere to put one.
+    showScrollHint: false,
   },
 
   // ── Ambient effects ──
@@ -157,7 +160,7 @@ const config = {
   // Every visual is drawn procedurally (SVG + CSS) by default. Drop a file in
   // public/ and point at it here to swap in real artwork — no code change.
   assets: {
-    seal: '',                          // e.g. "/assets/wax-seal.png"
+    seal: '/assets/wax-seal.webp',     // cut out of the reference art by scripts/extract-wax-seal.mjs
     felt: '',                          // e.g. "/assets/red-felt.jpg"
     paper: '',                         // e.g. "/assets/blue-paper.jpg"
     bouquet: '',                       // e.g. "/assets/rose-bouquet.png"
@@ -171,16 +174,21 @@ const config = {
     ratio: 1.6,                        // 16:10, matches the reference recording
     portraitRatio: 0.78,               // Used when the viewport is taller than wide
     cardWidth: 76,                     // % of stage width
-    cardHeight: 80,                    // % of stage height
-    sealWidth: 21,                     // % of stage width
-    sealTop: -2,                       // % of stage height, negative = bleeds off the top
+    cardHeight: 84,                    // % of stage height
+    cardOffsetY: 5,                    // % of stage height the card sits below centre
+    // The reference seal is a wide oval, so width and height are independent.
+    sealWidth: 28,                     // % of stage width
+    sealHeight: 27,                    // % of stage height
+    sealTop: 1,                        // % of stage height from the top edge
+    pocketHeight: 30,                  // % of stage height the bottom flaps rise to
+    pocketWidth: 33,                   // % of stage width each bottom flap spans
   },
 
   // ── Branding / Credit ──
   credit: {
     show: true,
-    text: 'Made with ♥ by EkoDev',
-    url: 'https://ekodev.in',
+    text: 'Made with ♥ by Liyaa',
+    url: 'https://neilnicholas.xyz',
   },
 
   // ── Theme ──

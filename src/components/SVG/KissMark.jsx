@@ -1,36 +1,37 @@
-// Lipstick print: solid lips broken up by lighter creases so it reads as a
-// blotted kiss rather than a flat shape.
+// Lipstick print: an upper lip with two peaks and a centre dip, a fuller lower
+// lip, and lighter creases so it reads as blotted lipstick, not a flat shape.
 export function KissMark({ color = '#c8121f', crease = '#f0616c', className = '' }) {
   return (
     <svg
       className={`svg-kiss ${className}`}
-      viewBox="0 0 140 96"
+      viewBox="0 0 160 104"
       fill="none"
       aria-hidden="true"
       focusable="false"
     >
       <g fill={color}>
         {/* Upper lip */}
-        <path d="M70 40 C64 22 52 12 38 14 C20 16 8 30 6 42 C24 40 48 38 70 40 Z" />
-        <path d="M70 40 C76 22 88 12 102 14 C120 16 132 30 134 42 C116 40 92 38 70 40 Z" />
+        <path d="M8 48 C22 18 46 6 58 22 C64 30 72 34 80 34 C88 34 96 30 102 22 C114 6 138 18 152 48 C120 40 100 42 80 43 C60 42 40 40 8 48 Z" />
         {/* Lower lip */}
-        <path d="M6 46 C22 44 48 42 70 44 C92 42 118 44 134 46 C126 68 102 88 70 90 C38 88 14 68 6 46 Z" />
+        <path d="M8 52 C40 44 118 44 152 52 C142 82 114 100 80 100 C46 100 18 82 8 52 Z" />
       </g>
 
-      {/* Creases */}
-      <g stroke={crease} strokeWidth="2" strokeLinecap="round" opacity="0.85">
-        <path d="M26 30 L22 44" />
-        <path d="M42 22 L40 42" />
-        <path d="M58 22 L58 41" />
-        <path d="M82 22 L82 41" />
-        <path d="M98 22 L100 42" />
-        <path d="M114 30 L118 44" />
-        <path d="M22 52 L28 66" />
-        <path d="M42 54 L44 74" />
-        <path d="M60 55 L60 80" />
-        <path d="M80 55 L80 80" />
-        <path d="M98 54 L96 74" />
-        <path d="M118 52 L112 66" />
+      <g stroke={crease} strokeWidth="1.7" strokeLinecap="round" opacity="0.75">
+        <path d="M22 34 L18 46" />
+        <path d="M40 20 L38 42" />
+        <path d="M56 20 L58 42" />
+        <path d="M70 28 L71 43" />
+        <path d="M90 28 L89 43" />
+        <path d="M104 20 L102 42" />
+        <path d="M120 20 L122 42" />
+        <path d="M138 34 L142 46" />
+        <path d="M20 56 L28 70" />
+        <path d="M40 58 L44 82" />
+        <path d="M60 60 L61 92" />
+        <path d="M80 60 L80 96" />
+        <path d="M100 60 L99 92" />
+        <path d="M120 58 L116 82" />
+        <path d="M140 56 L132 70" />
       </g>
     </svg>
   );

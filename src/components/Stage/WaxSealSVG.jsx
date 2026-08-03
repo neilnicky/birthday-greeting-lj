@@ -36,8 +36,10 @@ function buildBlob(cx, cy, radius, amplitude, lobes) {
   return `${d} Z`;
 }
 
-const OUTER_BLOB = buildBlob(50, 50, 43, 4.2, 11);
-const RIM_BLOB = buildBlob(50, 50, 36.5, 2.4, 11);
+// Outer splat is deliberately much lumpier than the rim it surrounds, so the
+// scalloped wax edge reads clearly instead of collapsing into a disc.
+const OUTER_BLOB = buildBlob(50, 50, 41, 8.5, 12);
+const RIM_BLOB = buildBlob(50, 50, 33, 2.2, 12);
 
 export function WaxSealSVG({
   goldLight = '#f5e2a8',
@@ -46,7 +48,9 @@ export function WaxSealSVG({
   title,
 }) {
   return (
-    <svg viewBox="0 0 100 100" role="img" aria-label={title}>
+    // preserveAspectRatio="none" lets the wax stretch into the wide oval the
+    // reference uses, instead of letterboxing inside its box.
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={title}>
       <defs>
         <radialGradient id="wax-outer" cx="36%" cy="28%" r="78%">
           <stop offset="0%" stopColor={goldLight} />
@@ -83,7 +87,7 @@ export function WaxSealSVG({
           <feDisplacementMap
             in="SourceGraphic"
             in2="edgeNoise"
-            scale="3.4"
+            scale="6"
             xChannelSelector="R"
             yChannelSelector="G"
           />
@@ -120,28 +124,35 @@ export function WaxSealSVG({
 
       <g filter="url(#wax-shadow)">
         {/* Splattered outer wax */}
-        <path d={OUTER_BLOB} fill="url(#wax-outer)" filter="url(#wax-edge)" />
+        <path
+          d={OUTER_BLOB}
+          fill="url(#wax-outer)"
+          stroke={goldDark}
+          strokeOpacity="0.55"
+          strokeWidth="0.7"
+          filter="url(#wax-edge)"
+        />
 
-        {/* Raised rim */}
+        {/* Raised rim, sunk into the splat */}
         <path
           d={RIM_BLOB}
           fill="url(#wax-rim)"
           stroke={goldDark}
-          strokeOpacity="0.45"
-          strokeWidth="0.8"
+          strokeOpacity="0.6"
+          strokeWidth="1.1"
         />
 
         {/* Embossed rings */}
-        <circle cx="50" cy="50" r="32" fill="none" stroke={goldDark} strokeOpacity="0.5" strokeWidth="1.1" />
-        <circle cx="50" cy="50" r="29.4" fill="none" stroke={goldLight} strokeOpacity="0.45" strokeWidth="0.7" />
-        <circle cx="50" cy="50" r="26.5" fill="none" stroke={goldDark} strokeOpacity="0.38" strokeWidth="0.9" />
+        <circle cx="50" cy="50" r="29.5" fill="none" stroke={goldDark} strokeOpacity="0.62" strokeWidth="1.5" />
+        <circle cx="50" cy="50" r="27" fill="none" stroke={goldLight} strokeOpacity="0.5" strokeWidth="0.8" />
+        <circle cx="50" cy="50" r="24.4" fill="none" stroke={goldDark} strokeOpacity="0.5" strokeWidth="1.2" />
 
         {/* Pressed centre */}
-        <circle cx="50" cy="50" r="24" fill="url(#wax-core)" filter="url(#wax-grain)" />
-        <circle cx="50" cy="50" r="24" fill="none" stroke={goldDark} strokeOpacity="0.3" strokeWidth="0.7" />
+        <circle cx="50" cy="50" r="22" fill="url(#wax-core)" filter="url(#wax-grain)" />
+        <circle cx="50" cy="50" r="22" fill="none" stroke={goldDark} strokeOpacity="0.42" strokeWidth="0.9" />
 
-        {/* Specular highlight */}
-        <ellipse cx="41" cy="34" rx="16" ry="11" fill="url(#wax-gloss)" transform="rotate(-24 41 34)" />
+        {/* Specular highlight — kept low so it reads as wax, not polished metal */}
+        <ellipse cx="40" cy="33" rx="15" ry="9" fill="url(#wax-gloss)" transform="rotate(-24 40 33)" opacity="0.5" />
       </g>
     </svg>
   );

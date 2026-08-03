@@ -12,7 +12,7 @@
   top: 50%;
   left: 50%;
   width: calc(var(--card-w, 76) * var(--u));
-  height: calc(var(--card-h, 80) * var(--v));
+  height: calc(var(--card-h, 84) * var(--v));
   background: var(--card);
   box-shadow:
     0 calc(1.6 * var(--u)) calc(5 * var(--u)) rgba(0, 0, 0, 0.3),
@@ -20,16 +20,19 @@
   overflow: hidden;
   z-index: 10;
 
+  /* The card sits slightly below centre, the way a letter rests in the pocket. */
+  --card-rest: calc(-50% + var(--card-offset-y, 5) * var(--v));
+
   /* Entrance: slides up out of the envelope and settles. */
   opacity: 0;
-  transform: translate(-50%, calc(-50% + 12 * var(--v))) scale(0.94);
+  transform: translate(-50%, calc(var(--card-rest) + 12 * var(--v))) scale(0.94);
   transition:
     opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card.is-visible {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, var(--card-rest)) scale(1);
 }
 
 /* Content sits above the paper texture and the doodle border. */
@@ -39,9 +42,11 @@
   z-index: 3;
 }
 
-/* Staggered fade for the direct children of a card. */
+/* Staggered fade for the direct children of a card.
+   Opacity only — these elements own their own transforms (centring, tilts,
+   spring entrances), and animating transform here would silently reset them. */
 .card.is-visible .card__content > * {
-  animation: card-child-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: card-child-in 0.6s ease both;
 }
 .card__content > *:nth-child(1) { animation-delay: 0.10s; }
 .card__content > *:nth-child(2) { animation-delay: 0.20s; }
@@ -50,8 +55,8 @@
 .card__content > *:nth-child(5) { animation-delay: 0.50s; }
 .card__content > *:nth-child(6) { animation-delay: 0.60s; }
 @keyframes card-child-in {
-  from { opacity: 0; transform: translateY(calc(1.4 * var(--v))); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── Paper texture ── */
@@ -106,7 +111,7 @@
 
 .card__date {
   position: absolute;
-  top: calc(5 * var(--v));
+  top: calc(9.5 * var(--v));
   right: calc(6 * var(--u));
   font-family: var(--font-hand);
   font-size: calc(1.5 * var(--u));
@@ -172,7 +177,7 @@
    ═══════════════════════════════════════════════════════════ */
 .birthday-card__heading {
   position: absolute;
-  top: calc(18 * var(--v));
+  top: calc(20 * var(--v));
   left: 0;
   right: 0;
   display: flex;
@@ -181,14 +186,14 @@
   gap: calc(0.5 * var(--v));
   text-align: center;
 }
-.birthday-card__line-1 { font-size: calc(8.4 * var(--u)); }
+.birthday-card__line-1 { font-size: calc(7.6 * var(--u)); }
 .birthday-card__line-2 {
-  font-size: calc(8.4 * var(--u));
+  font-size: calc(7.6 * var(--u));
   margin-left: calc(-6 * var(--u));
 }
 
 .birthday-card__hearts {
-  top: calc(7 * var(--v));
+  top: calc(11 * var(--v));
   right: calc(12 * var(--u));
   width: calc(10 * var(--u));
 }
@@ -215,12 +220,12 @@
    ═══════════════════════════════════════════════════════════ */
 .love-letter__greeting {
   position: absolute;
-  top: calc(11 * var(--v));
-  left: calc(9 * var(--u));
-  width: calc(50 * var(--u));
+  top: calc(13 * var(--v));
+  left: calc(6 * var(--u));
+  width: calc(42 * var(--u));
 }
 .love-letter__greeting h2 {
-  font-size: calc(8 * var(--u));
+  font-size: calc(7 * var(--u));
   padding-left: calc(2 * var(--u));
 }
 .brush-underline {
@@ -240,12 +245,12 @@
 
 .love-letter__body {
   position: absolute;
-  top: calc(30 * var(--v));
-  left: calc(14 * var(--u));
-  right: calc(14 * var(--u));
+  top: calc(28 * var(--v));
+  left: calc(13 * var(--u));
+  right: calc(13 * var(--u));
   font-family: var(--font-hand);
-  font-size: calc(2.5 * var(--u));
-  line-height: 1.75;
+  font-size: calc(1.9 * var(--u));
+  line-height: 1.62;
   letter-spacing: calc(0.09 * var(--u));
   text-align: center;
   color: var(--ink-navy);
@@ -258,14 +263,14 @@
 .love-letter__cursor.is-on { opacity: 1; }
 
 .love-letter__doodle--cake {
-  width: calc(13 * var(--u));
-  left: calc(8 * var(--u));
-  bottom: calc(2 * var(--v));
+  width: calc(11 * var(--u));
+  left: calc(4 * var(--u));
+  bottom: calc(3 * var(--v));
 }
 .love-letter__doodle--balloons {
-  width: calc(9 * var(--u));
-  right: calc(9 * var(--u));
-  bottom: calc(4 * var(--v));
+  width: calc(8 * var(--u));
+  right: calc(5 * var(--u));
+  bottom: calc(3 * var(--v));
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -273,20 +278,20 @@
    ═══════════════════════════════════════════════════════════ */
 .flowers-card__heading {
   position: absolute;
-  top: calc(21 * var(--v));
-  left: calc(14 * var(--u));
-  right: calc(14 * var(--u));
-  font-size: calc(6.6 * var(--u));
+  top: calc(24 * var(--v));
+  left: calc(19 * var(--u));
+  right: calc(19 * var(--u));
+  font-size: calc(5.4 * var(--u));
   text-align: center;
 }
 
 .flowers-card__rosette {
-  top: calc(9 * var(--v));
+  top: calc(14 * var(--v));
   left: calc(7 * var(--u));
   width: calc(6.5 * var(--u));
 }
 .flowers-card__sparkles {
-  top: calc(14 * var(--v));
+  top: calc(20 * var(--v));
   right: calc(9 * var(--u));
   width: calc(10 * var(--u));
 }
@@ -299,8 +304,8 @@
 .flowers-card__bouquet {
   position: absolute;
   left: 50%;
-  bottom: calc(-4 * var(--v));
-  width: calc(22 * var(--u));
+  bottom: calc(-2 * var(--v));
+  width: calc(19 * var(--u));
   transform: translate(-50%, calc(30 * var(--v))) scale(0.7) rotate(-8deg);
   opacity: 0;
   transition:
@@ -311,13 +316,15 @@
   transform: translate(-50%, 0) scale(1) rotate(0);
   opacity: 1;
 }
+/* The shared SVG rule makes illustrations absolute; inside the bouquet the
+   artwork must stay in flow so the wrapper takes its height. */
 .flowers-card__bouquet > svg,
-.flowers-card__bouquet > img { width: 100%; height: auto; }
+.flowers-card__bouquet > img { position: static; width: 100%; height: auto; }
 
 .flowers-card__kiss {
-  width: calc(13 * var(--u));
-  right: calc(11 * var(--u));
-  bottom: calc(10 * var(--v));
+  width: calc(9 * var(--u));
+  right: calc(12 * var(--u));
+  bottom: calc(12 * var(--v));
   transform: rotate(-14deg) scale(1.6);
   opacity: 0;
   transition: transform 0.28s cubic-bezier(0.3, 1.8, 0.5, 1) 1.1s, opacity 0.16s ease 1.1s;
@@ -328,18 +335,18 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   4 — Make a wish
+   4 — Wish
    ═══════════════════════════════════════════════════════════ */
 .wish-card__heading {
   position: absolute;
-  top: calc(19 * var(--v));
-  left: calc(12 * var(--u));
-  right: calc(12 * var(--u));
-  font-size: calc(6.8 * var(--u));
+  top: calc(23 * var(--v));
+  left: calc(11 * var(--u));
+  right: calc(11 * var(--u));
+  font-size: calc(5.8 * var(--u));
   text-align: center;
 }
 .wish-card__sparkles {
-  top: calc(38 * var(--v));
+  top: calc(40 * var(--v));
   right: calc(9 * var(--u));
   width: calc(10 * var(--u));
 }
@@ -428,10 +435,10 @@
    ═══════════════════════════════════════════════════════════ */
 .film-strip__heading {
   position: absolute;
-  top: calc(20 * var(--v));
+  top: calc(25 * var(--v));
   left: 0;
   right: 0;
-  font-size: calc(5.4 * var(--u));
+  font-size: calc(4.8 * var(--u));
   text-align: center;
   display: flex;
   align-items: center;
@@ -447,20 +454,21 @@
 
 .film-strip__rig {
   position: absolute;
-  left: calc(7 * var(--u));
-  right: calc(7 * var(--u));
-  top: calc(46 * var(--v));
+  left: calc(8 * var(--u));
+  right: calc(8 * var(--u));
+  top: calc(44 * var(--v));
   display: flex;
   align-items: center;
 }
 .film-strip__canister {
   position: static;
   flex: 0 0 auto;
-  width: calc(10 * var(--u));
+  width: calc(7.5 * var(--u));
   z-index: 2;
 }
 
 .film-strip__track {
+  flex: 1 1 auto;
   display: flex;
   gap: calc(0.5 * var(--u));
   padding: calc(0.6 * var(--u));
@@ -473,8 +481,8 @@
 .film-strip__track.is-out { clip-path: inset(0 0 0 0); }
 
 .film-frame {
-  flex: 0 0 auto;
-  width: calc(11 * var(--u));
+  flex: 1 1 0;
+  min-width: 0;
   aspect-ratio: 3 / 2;
   background: #2a2a2a;
   opacity: 0;
@@ -494,26 +502,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(0.4 * var(--v));
+  gap: calc(0.6 * var(--v));
+  overflow: hidden;
 }
-.film-frame__icon { width: calc(3.4 * var(--u)); height: auto; }
+.film-frame__icon { width: calc(2.6 * var(--u)); height: auto; }
 .film-frame__placeholder-text {
   font-family: var(--font-hand);
-  font-size: calc(1 * var(--u));
+  font-size: calc(0.85 * var(--u));
   color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
 }
 
 .film-strip__star {
-  width: calc(14 * var(--u));
-  left: calc(12 * var(--u));
-  bottom: calc(2 * var(--v));
+  width: calc(10 * var(--u));
+  left: calc(10 * var(--u));
+  bottom: calc(1 * var(--v));
   opacity: 0.85;
 }
 .film-strip__hint {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(3 * var(--v));
+  bottom: calc(1.5 * var(--v));
   text-align: center;
   font-family: var(--font-hand);
   font-size: calc(1.4 * var(--u));
@@ -571,27 +581,27 @@
 .love-jar__jar {
   position: absolute;
   left: calc(11 * var(--u));
-  top: calc(19 * var(--v));
-  width: calc(20 * var(--u));
+  top: calc(24 * var(--v));
+  width: calc(17 * var(--u));
 }
 .love-jar__jar .svg-jar { position: static; width: 100%; }
 
 /* Slips still inside the glass */
 .love-jar__pile {
   position: absolute;
-  left: 16%;
-  right: 16%;
-  bottom: 9%;
-  height: 34%;
+  left: 26%;
+  right: 26%;
+  bottom: 12%;
+  height: 26%;
 }
 .love-jar__slip {
   position: absolute;
-  width: 42%;
+  width: 46%;
   height: 15%;
   background: var(--note-pink);
   border: calc(0.12 * var(--u)) solid var(--ink-red);
-  left: calc(4% + (var(--slot) * 11%));
-  bottom: calc(2% + (var(--slot) * 15%));
+  left: calc(4% + (var(--slot) * 9%));
+  bottom: calc(3% + (var(--slot) * 14%));
   transform: rotate(calc(var(--slot) * 17deg - 34deg));
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
@@ -602,12 +612,12 @@
 
 .love-jar__side {
   position: absolute;
-  right: calc(8 * var(--u));
-  top: calc(20 * var(--v));
-  width: calc(38 * var(--u));
+  right: calc(7 * var(--u));
+  top: calc(24 * var(--v));
+  width: calc(34 * var(--u));
 }
 .love-jar__heading {
-  font-size: calc(5.4 * var(--u));
+  font-size: calc(4.8 * var(--u));
   text-align: center;
 }
 .love-jar__stage {
@@ -621,8 +631,8 @@
   position: absolute;
   left: 50%;
   top: 0;
-  width: calc(30 * var(--u));
-  min-height: calc(11 * var(--v));
+  width: calc(24 * var(--u));
+  min-height: calc(13 * var(--v));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -632,7 +642,7 @@
   clip-path: polygon(0 0, 100% 0, 100% 78%, 92% 100%, 0 100%);
   font-family: var(--font-rounded);
   font-weight: 600;
-  font-size: calc(2.5 * var(--u));
+  font-size: calc(2.2 * var(--u));
   line-height: 1.25;
   text-align: center;
   color: #ffffff;
@@ -657,9 +667,9 @@
 .coupon {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: calc(58 * var(--u));
-  height: calc(46 * var(--v));
+  top: 56%;
+  width: calc(56 * var(--u));
+  height: calc(42 * var(--v));
   background: var(--card-pink);
   /* Ticket notches on all four corners */
   clip-path: polygon(
@@ -683,15 +693,16 @@
   inset: calc(1.6 * var(--v)) calc(2 * var(--u));
   border: calc(0.5 * var(--u)) solid rgba(255, 255, 255, 0.75);
   filter: blur(calc(0.12 * var(--u)));
+  /* Same notch profile as the ticket, so the chalk border follows its edge. */
   clip-path: polygon(
-    0 14%, 7% 14%, 7% 0, 93% 0, 93% 14%, 100% 14%,
-    100% 86%, 93% 86%, 93% 100%, 7% 100%, 7% 86%, 0 86%
+    0 12%, 6% 12%, 6% 0, 94% 0, 94% 12%, 100% 12%,
+    100% 88%, 94% 88%, 94% 100%, 6% 100%, 6% 88%, 0 88%
   );
 }
 
 .coupon__title {
   position: absolute;
-  top: calc(7 * var(--v));
+  top: calc(6 * var(--v));
   left: 0;
   right: 0;
   font-family: var(--font-rounded);
@@ -703,7 +714,7 @@
 }
 .coupon__for {
   position: absolute;
-  top: calc(23 * var(--v));
+  top: calc(20 * var(--v));
   left: 0;
   right: 0;
   font-family: var(--font-rounded);
@@ -714,7 +725,7 @@
 }
 .coupon__rule {
   position: absolute;
-  top: calc(34 * var(--v));
+  top: calc(28 * var(--v));
   left: calc(9 * var(--u));
   right: calc(9 * var(--u));
   height: calc(0.22 * var(--u));
@@ -723,16 +734,16 @@
 }
 
 .coupon__figure { width: calc(9 * var(--u)); }
-.coupon__figure--left  { left: calc(1.5 * var(--u)); top: calc(15 * var(--v)); }
-.coupon__figure--right { right: calc(1.5 * var(--u)); top: calc(18 * var(--v)); }
+.coupon__figure--left  { left: calc(1 * var(--u)); top: calc(12 * var(--v)); }
+.coupon__figure--right { right: calc(1 * var(--u)); top: calc(15 * var(--v)); }
 
 .coupon__meta {
   position: absolute;
   left: calc(5 * var(--u));
-  bottom: calc(4 * var(--v));
+  bottom: calc(3 * var(--v));
   font-family: var(--font-rounded);
   font-weight: 500;
-  font-size: calc(1.9 * var(--u));
+  font-size: calc(1.7 * var(--u));
   color: #d2434d;
   line-height: 1.5;
 }
@@ -743,7 +754,7 @@
 .coupon__barcode {
   position: absolute;
   right: calc(5 * var(--u));
-  bottom: calc(4 * var(--v));
+  bottom: calc(3 * var(--v));
   display: flex;
   align-items: stretch;
   gap: calc(0.12 * var(--u));
@@ -759,8 +770,8 @@
    ═══════════════════════════════════════════════════════════ */
 .claw-card__intro {
   position: absolute;
-  left: calc(10 * var(--u));
-  top: calc(56 * var(--v));
+  left: calc(9 * var(--u));
+  top: calc(44 * var(--v));
   display: flex;
   flex-direction: column;
   font-family: var(--font-hand);
@@ -770,53 +781,51 @@
   color: var(--ink-navy);
 }
 .claw-card__sparkles {
-  top: calc(20 * var(--v));
+  top: calc(22 * var(--v));
   left: calc(9 * var(--u));
   width: calc(11 * var(--u));
 }
 .claw-card__hearts {
-  top: calc(16 * var(--v));
+  top: calc(20 * var(--v));
   right: calc(8 * var(--u));
   width: calc(15 * var(--u));
 }
 
-/* The claw + its prize travel together. */
+/* Hidden defs holder for the shared heart clip. */
+.claw-card__defs { position: absolute; width: 0; height: 0; }
+
+/* The claw and its prize travel together: the cable disappears up behind the
+   wax seal, so the arm reads as coming from off-card. */
 .claw-card__rig {
   position: absolute;
   left: 50%;
-  top: calc(-14 * var(--v));
+  top: calc(4 * var(--v));
   width: calc(16 * var(--u));
-  transform: translateX(-50%) translateY(calc(-30 * var(--v)));
+  transform: translateX(-50%) translateY(calc(-34 * var(--v)));
   transition: transform 0.9s cubic-bezier(0.4, 0, 0.3, 1);
 }
 .claw-card__rig.is-drop,
 .claw-card__rig.is-grip { transform: translateX(-50%) translateY(0); }
-.claw-card__rig.is-lift { transform: translateX(-50%) translateY(calc(-11 * var(--v))); }
+.claw-card__rig.is-lift { transform: translateX(-50%) translateY(calc(-5 * var(--v))); }
 
 .claw-card__arm { position: static; width: 100%; }
-.svg-claw__prongs { transition: none; }
 
 .claw-card__gem {
   position: absolute;
   left: 50%;
-  top: calc(72%);
-  width: calc(22 * var(--u));
+  top: 74%;
+  width: calc(19 * var(--u));
   aspect-ratio: 1;
   transform: translateX(-50%);
   background: #e0242f;
-  clip-path: path('M50 96 C50 96 6 64 6 34 C6 15 21 4 34 9 C43 13 49 23 50 31 C51 23 57 13 66 9 C79 4 94 15 94 34 C94 64 50 96 50 96 Z');
+  clip-path: url(#heart-clip);
   display: grid;
   place-items: center;
-}
-@supports not (clip-path: path('M0 0')) {
-  .claw-card__gem {
-    clip-path: polygon(50% 96%, 6% 52%, 6% 18%, 28% 6%, 50% 26%, 72% 6%, 94% 18%, 94% 52%);
-  }
 }
 .claw-card__gem-label {
   font-family: var(--font-marker);
   font-weight: 700;
-  font-size: calc(4.4 * var(--u));
+  font-size: calc(3.8 * var(--u));
   color: #111;
   transform: translateY(calc(-1.5 * var(--v)));
 }
@@ -837,17 +846,12 @@
   display: grid;
   place-items: center;
   background: #e8434e;
-  clip-path: path('M50 96 C50 96 6 64 6 34 C6 15 21 4 34 9 C43 13 49 23 50 31 C51 23 57 13 66 9 C79 4 94 15 94 34 C94 64 50 96 50 96 Z');
+  clip-path: url(#heart-clip);
   transform: rotate(var(--tilt));
   animation: pile-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--delay);
 }
 .claw-heart--dark { background: #b8202c; }
-@supports not (clip-path: path('M0 0')) {
-  .claw-heart {
-    clip-path: polygon(50% 96%, 6% 52%, 6% 18%, 28% 6%, 50% 26%, 72% 6%, 94% 18%, 94% 52%);
-  }
-}
 @keyframes pile-in {
   from { opacity: 0; transform: rotate(var(--tilt)) translateY(calc(4 * var(--v))); }
   to   { opacity: 1; transform: rotate(var(--tilt)); }
@@ -867,9 +871,9 @@
    ═══════════════════════════════════════════════════════════ */
 .qr-card__code {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(24 * var(--u));
+  left: 45%;
+  top: 58%;
+  width: calc(21 * var(--u));
   transform: translate(-50%, -50%);
   background: #fff;
   padding: calc(0.8 * var(--u));
@@ -887,8 +891,8 @@
 
 .qr-card__caption {
   position: absolute;
-  right: calc(9 * var(--u));
-  top: calc(26 * var(--v));
+  right: calc(8 * var(--u));
+  top: calc(24 * var(--v));
   width: calc(24 * var(--u));
 }
 .qr-card__heading {
@@ -901,21 +905,23 @@
 .qr-card__arrow {
   position: static;
   display: block;
-  width: calc(9 * var(--u));
-  margin: calc(1 * var(--v)) auto 0 calc(2 * var(--u));
+  width: calc(8 * var(--u));
+  height: auto;
+  margin: calc(1 * var(--v)) auto 0 calc(3 * var(--u));
 }
+/* pathLength normalises both strokes to 1, so one dash length draws either. */
 .curved-arrow.is-drawn path {
-  stroke-dasharray: 220;
-  stroke-dashoffset: 220;
-  animation: draw-in 1s ease-out 0.6s forwards;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-in 0.9s ease-out 0.5s forwards;
 }
-.curved-arrow.is-drawn .curved-arrow__head { animation-delay: 1.4s; }
+.curved-arrow.is-drawn .curved-arrow__head { animation-delay: 1.3s; }
 @keyframes draw-in { to { stroke-dashoffset: 0; } }
 
 .qr-card__bunting {
-  top: calc(6 * var(--v));
+  top: calc(16 * var(--v));
   left: calc(5 * var(--u));
-  width: calc(26 * var(--u));
+  width: calc(24 * var(--u));
 }
 .svg-bunting.is-swaying {
   transform-origin: 50% 0;

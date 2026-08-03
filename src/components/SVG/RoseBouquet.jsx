@@ -15,21 +15,35 @@ const ROSES = [
   { x: 118, y: 136, r: 13, shade: 2 },
 ];
 
+// Loose spiral for the rose centre. Kept to under two turns so it reads as
+// furled petals rather than a lollipop.
 function spiral(cx, cy, r) {
   let d = `M ${cx.toFixed(1)} ${cy.toFixed(1)}`;
-  const turns = 2.4;
-  const steps = 34;
+  const turns = 1.55;
+  const steps = 28;
   for (let i = 1; i <= steps; i += 1) {
     const t = i / steps;
-    const a = t * turns * Math.PI * 2;
-    const rad = r * 0.92 * t;
+    const a = t * turns * Math.PI * 2 + 0.8;
+    const rad = r * 0.6 * t;
     d += ` L ${(cx + Math.cos(a) * rad).toFixed(1)} ${(cy + Math.sin(a) * rad * 0.94).toFixed(1)}`;
   }
   return d;
 }
 
+// Outer petals wrapping the spiral.
+function petals(cx, cy, r) {
+  const arc = (a0, a1) => {
+    const x0 = cx + Math.cos(a0) * r * 0.82;
+    const y0 = cy + Math.sin(a0) * r * 0.82;
+    const x1 = cx + Math.cos(a1) * r * 0.82;
+    const y1 = cy + Math.sin(a1) * r * 0.82;
+    return `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${(r * 0.9).toFixed(1)} ${(r * 0.9).toFixed(1)} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  };
+  return [arc(0.4, 2.4), arc(2.6, 4.6), arc(4.8, 6.5)].join(' ');
+}
+
 export function RoseBouquet({
-  petals = ['#e02434', '#c4101f', '#f0424f'],
+  petalColors = ['#e02434', '#c4101f', '#f0424f'],
   outline = '#8e0d18',
   wrap = '#dfe6f5',
   wrapLine = 'var(--ink-red)',
@@ -55,27 +69,34 @@ export function RoseBouquet({
       {/* Roses */}
       {ROSES.map((rose) => (
         <g key={`${rose.x}-${rose.y}`}>
-          <circle cx={rose.x} cy={rose.y} r={rose.r} fill={petals[rose.shade]} />
+          <circle cx={rose.x} cy={rose.y} r={rose.r} fill={petalColors[rose.shade]} />
+          <path
+            d={petals(rose.x, rose.y, rose.r)}
+            stroke={outline}
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.7"
+          />
           <path
             d={spiral(rose.x, rose.y, rose.r)}
             stroke={outline}
-            strokeWidth="1.5"
+            strokeWidth="1.6"
             strokeLinecap="round"
             fill="none"
-            opacity="0.8"
+            opacity="0.85"
           />
         </g>
       ))}
 
-      {/* Wrapper front folds + ribbon */}
+      {/* Wrapper front fold + ribbon */}
       <g stroke={wrapLine} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M60 150 L100 234 L140 150" fill={wrap} fillOpacity="0.85" />
-        <path d="M100 234 L100 276" />
-        <path d="M78 196 C88 190 112 190 122 196" />
-        <path d="M100 196 C86 186 68 190 71 202 C74 214 94 208 100 199" />
-        <path d="M100 196 C114 186 132 190 129 202 C126 214 106 208 100 199" />
-        <path d="M96 206 C88 232 84 254 82 274" />
-        <path d="M104 206 C112 232 116 254 118 274" />
+        <path d="M52 138 L100 236 L148 138" fill={wrap} />
+        <path d="M100 236 L100 272" />
+        <path d="M100 198 C86 188 68 192 71 204 C74 216 94 210 100 201" />
+        <path d="M100 198 C114 188 132 192 129 204 C126 216 106 210 100 201" />
+        <path d="M96 208 C90 232 86 252 84 270" />
+        <path d="M104 208 C110 232 114 252 116 270" />
       </g>
     </svg>
   );

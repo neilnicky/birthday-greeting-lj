@@ -82,8 +82,12 @@ function applyTheme({ theme, fonts, stage }) {
     '--stage-ratio-portrait': String(stage.portraitRatio),
     '--card-w': String(stage.cardWidth),
     '--card-h': String(stage.cardHeight),
+    '--card-offset-y': String(stage.cardOffsetY),
     '--seal-width': String(stage.sealWidth),
+    '--seal-height': String(stage.sealHeight),
     '--seal-top': String(stage.sealTop),
+    '--pocket-h': String(stage.pocketHeight),
+    '--pocket-w': String(stage.pocketWidth),
   };
 
   Object.entries(vars).forEach(([key, value]) => root.setProperty(key, value));
@@ -163,7 +167,9 @@ export default function App() {
 
       <EnvelopeOverlay isOpen={isOpen} onOpen={handleOpen} />
 
-      <ScrollHint text={config.envelope.scrollHint} visible={isOpen && activeSection === 0} />
+      {config.ui.showScrollHint ? (
+        <ScrollHint text={config.envelope.scrollHint} visible={isOpen && activeSection === 0} />
+      ) : null}
 
       {config.ui.showDots ? (
         <SectionDots
