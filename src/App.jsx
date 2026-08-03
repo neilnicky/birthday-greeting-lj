@@ -194,7 +194,11 @@ export default function App() {
       {/* Mounted only after the seal is broken — that click is the user gesture
           the embed needs if autoplay is going to work at all. */}
       {isOpen && !audio.enabled ? (
-        <SpotifyPlayer url={config.music.spotifyUrl} label={config.music.spotifyLabel} />
+        <SpotifyPlayer
+          url={config.music.spotifyUrl}
+          label={config.music.spotifyLabel}
+          startSeconds={config.music.spotifyStartSeconds}
+        />
       ) : null}
     </>
   );

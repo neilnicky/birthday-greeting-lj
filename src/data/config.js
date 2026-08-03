@@ -121,9 +121,7 @@ const config = {
   qr: {
     ariaLabel: 'QR code',
     heading: 'All our memories, in one place',
-    // ⚠ NEEDED: paste the shared photo album link here (Google Photos / Drive).
-    // While this is empty the card shows `fallbackText` instead of a QR.
-    url: '',
+    url: 'https://www.icloud.com/photos/#/icloudlinks/01b6OJIef10okgO_aEn47AfZw/',
     fallbackText: 'Set your URL in config to generate QR',
   },
 
@@ -134,13 +132,16 @@ const config = {
     playLabel: 'Play background music',
     pauseLabel: 'Pause background music',
 
-    // ⚠ NEEDED: paste the Spotify track link here, e.g.
-    //   https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
-    // Empty = no player rendered at all.
-    // Note: Spotify's embed will very likely need one tap to start — browsers
-    // block cross-origin autoplay, and logged-out listeners get a 30s preview.
-    spotifyUrl: '',
-    spotifyLabel: 'Our song',
+    // "This Town". Spotify's embed will very likely need one tap to start —
+    // browsers block cross-origin autoplay, and logged-out listeners get a
+    // 30s preview rather than the full track.
+    spotifyUrl: 'https://open.spotify.com/track/0qvzXomUDJVaUboy2wMfiS',
+    spotifyLabel: 'This Town',
+    // Skip the intro and open on "If the whole world was watching…".
+    // Only applies when the full track is available — a logged-out listener
+    // gets a ~30s preview, and the player leaves that alone rather than
+    // seeking past the end of it.
+    spotifyStartSeconds: 55,
   },
 
   // ── Global UI labels + chrome toggles ──

@@ -183,13 +183,14 @@
   width: 100%;
   height: 100%;
 }
-/* The procedural seal carried its own drop shadow in the SVG filter chain; the
-   photographic one has no shadow of its own (the reference's was neutral grey
-   and got keyed out), so it gets an equivalent here. object-fit is stated
-   explicitly because the seal box is deliberately wider than the artwork —
-   filling it is the same stretch the SVG did with preserveAspectRatio="none". */
+/* `contain`, not `fill`: the seal box is wider than the artwork, and the stage
+   ratio flips to portrait on tall viewports, so filling it would stretch a round
+   seal into an oval by a different amount per orientation. Contain keeps it
+   circular everywhere and just letterboxes the spare width.
+   The drop shadow replaces the one the procedural SVG carried in its filter
+   chain — the reference's own cast shadow was neutral grey and got keyed out. */
 .seal img {
-  object-fit: fill;
+  object-fit: contain;
   filter: drop-shadow(0 calc(0.5 * var(--v)) calc(0.7 * var(--v)) rgba(0, 0, 0, 0.42));
 }
 .seal__inner { width: 100%; height: 100%; }
