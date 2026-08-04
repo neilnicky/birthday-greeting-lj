@@ -16,6 +16,7 @@ const config = {
     hintText: 'tap to open ♥',
     scrollHint: 'scroll down ↓',
     sealAriaLabel: 'Open the envelope',
+    sealCloseAriaLabel: 'Close the card',
   },
 
   // ── Birthday card section ──
@@ -185,14 +186,29 @@ const config = {
   stage: {
     ratio: 1.6,                        // 16:10, matches the reference recording
     portraitRatio: 0.66,               // Used when the viewport is taller than wide
-    cardWidth: 76,                     // % of stage width
-    cardHeight: 84,                    // % of stage height
+
+    // Card box. Percentages of stage width / stage height respectively.
+    cardWidth: 70,
+    cardHeight: 78,
     cardOffsetY: 5,                    // % of stage height the card sits below centre
-    // The reference seal is a wide oval, so width and height are independent.
-    sealWidth: 28,                     // % of stage width
-    sealHeight: 27,                    // % of stage height
-    sealTop: 1,                        // % of stage height from the top edge
-    pocketHeight: 30,                  // % of stage height the bottom flaps rise to
+    // Portrait fills the viewport rather than letterboxing, so the card is
+    // nearly full-bleed and barely offset — otherwise it drifts away from the
+    // flap and pocket, which are pinned to the viewport's edges.
+    cardWidthPortrait: 78,
+    cardHeightPortrait: 86,
+    cardOffsetYPortrait: 2,
+
+    // ── Envelope frame ──
+    // All of these are percentages of stage WIDTH, on purpose. They used to mix
+    // width and height units, which looks fine at 16:10 but falls apart in
+    // portrait: the two units decouple when the stage ratio flips, so the wedge
+    // and the pocket ballooned and tore away from the card on a phone.
+    sealSize: 17,                      // Seal diameter, open
+    sealSizeClosed: 20,                // Seal diameter, sealed envelope
+    sealTop: 0.6,                      // Seal's gap from the viewport's top edge
+    flapWidth: 38,                     // Span of the wedge behind the seal
+    flapRise: 7,                       // Depth of that wedge below the viewport's top edge
+    pocketRise: 19,                    // How far the bottom flaps rise over the card
     pocketWidth: 33,                   // % of stage width each bottom flap spans
   },
 

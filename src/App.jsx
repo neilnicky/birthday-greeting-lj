@@ -80,16 +80,22 @@ function applyTheme({ theme, fonts, stage }) {
     '--font-marker': fonts.marker,
 
     // Candidates only — Stage.css picks between them per orientation. Setting
-    // --stage-ratio here would beat the portrait media query.
+    // the resolved property here would beat the portrait media query.
     '--stage-ratio-landscape': String(stage.ratio),
     '--stage-ratio-portrait': String(stage.portraitRatio),
-    '--card-w': String(stage.cardWidth),
-    '--card-h': String(stage.cardHeight),
-    '--card-offset-y': String(stage.cardOffsetY),
-    '--seal-width': String(stage.sealWidth),
-    '--seal-height': String(stage.sealHeight),
+    '--card-w-landscape': String(stage.cardWidth),
+    '--card-h-landscape': String(stage.cardHeight),
+    '--card-w-portrait': String(stage.cardWidthPortrait),
+    '--card-h-portrait': String(stage.cardHeightPortrait),
+    '--card-offset-y-landscape': String(stage.cardOffsetY),
+    '--card-offset-y-portrait': String(stage.cardOffsetYPortrait),
+
+    '--seal-size': String(stage.sealSize),
+    '--seal-size-closed': String(stage.sealSizeClosed),
     '--seal-top': String(stage.sealTop),
-    '--pocket-h': String(stage.pocketHeight),
+    '--flap-w': String(stage.flapWidth),
+    '--flap-rise': String(stage.flapRise),
+    '--pocket-rise': String(stage.pocketRise),
     '--pocket-w': String(stage.pocketWidth),
   };
 
@@ -112,6 +118,9 @@ function loadFonts(families) {
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
+  // Bumped on every close so the deck remounts and the cards replay their
+  // entrance on the next open — useScrollReveal is one-shot per mount.
+  const [openCount, setOpenCount] = useState(0);
 
   const { progress, activeSection } = useScrollProgress();
   const heartsRef = useFloatingHearts(config.effects.floatingHearts);
@@ -139,18 +148,39 @@ export default function App() {
 
   const dots = rendered.map((s) => ({ id: s.id, label: SECTION_ARIA[s.id] }));
 
+  const handleOpen = useCallback(() => {
+    setIsOpen(true);
+    if (config.music.autoplayOnOpen && audio.enabled) audio.fadeIn();
+  }, [audio]);
+
+  // Re-seal. Jump to the top *before* the state flip, and instantly: the
+  // `is-sealed` class lands with the next render and its `overflow: hidden`
+  // would cancel a smooth scroll mid-flight. Closing from the top also mirrors
+  // the open exactly — the same first card sits behind the folding flap.
+  const handleClose = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    setIsOpen(false);
+    setOpenCount((n) => n + 1);
+  }, []);
+
   const { goTo } = useSectionNav({
     activeIndex: activeSection,
     count: rendered.length,
     enabled: isOpen,
     autoplay: config.autoplay,
     isOpen,
+    onEscape: handleClose,
   });
 
-  const handleOpen = useCallback(() => {
-    setIsOpen(true);
-    if (config.music.autoplayOnOpen && audio.enabled) audio.fadeIn();
-  }, [audio]);
+  // Reaching the end of the deck re-seals the envelope as an outro. The dwell
+  // timer leaves the last section readable, and scrolling back up cancels it.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    if (progress < 0.995 || activeSection !== rendered.length - 1) return undefined;
+
+    const timer = setTimeout(handleClose, 1800);
+    return () => clearTimeout(timer);
+  }, [isOpen, progress, activeSection, rendered.length, handleClose]);
 
   return (
     <>
@@ -164,11 +194,11 @@ export default function App() {
       <main className={isOpen ? 'deck is-open' : 'deck'}>
         {rendered.map((section) => {
           const Component = SECTION_COMPONENTS[section.id];
-          return <Component key={section.id} />;
+          return <Component key={`${section.id}-${openCount}`} />;
         })}
       </main>
 
-      <EnvelopeOverlay isOpen={isOpen} onOpen={handleOpen} />
+      <EnvelopeOverlay isOpen={isOpen} onOpen={handleOpen} onClose={handleClose} />
 
       {config.ui.showScrollHint ? (
         <ScrollHint text={config.envelope.scrollHint} visible={isOpen && activeSection === 0} />

@@ -59,27 +59,29 @@ const LANDSCAPE = {
   ],
 };
 
-// ── Portrait card: 1000 × 1520. Same vocabulary, re-laid-out so the loops sit
-// in the corners of a tall sheet and the side waves run its full height. ──
+// ── Portrait card: 1000 × 2400. In portrait the stage is the viewport, so the
+// sheet is close to full-bleed and much taller than it is wide. Same vocabulary
+// as the landscape layout, stretched over that height: the side waves run the
+// full drop and the loops sit in the far corners. ──
 const PORTRAIT = {
-  viewBox: '0 0 1000 1520',
-  stroke: 6.4,
-  squiggleStroke: 7.4,
+  viewBox: '0 0 1000 2400',
+  stroke: 8.5,
+  squiggleStroke: 9.8,
   runs: [
-    wave([[112, 74], [220, 46], [360, 62], [560, 44], [740, 60], [860, 44], [916, 104]]),
-    wave([[104, 70], [58, 220], [110, 380], [62, 540], [104, 700], [84, 792]]),
-    wave([[924, 110], [968, 268], [916, 428], [964, 588], [922, 748], [938, 840]]),
+    wave([[112, 128], [220, 96], [360, 114], [560, 94], [740, 112], [860, 94], [916, 160]]),
+    wave([[104, 124], [56, 420], [112, 700], [58, 980], [110, 1260], [60, 1520], [102, 1740], [84, 1866]]),
+    wave([[924, 168], [972, 470], [914, 750], [968, 1030], [912, 1310], [966, 1570], [920, 1790], [938, 1916]]),
   ],
-  squiggle: wave([[330, 1418], [450, 1392], [560, 1424], [670, 1396], [760, 1416]]),
+  squiggle: wave([[330, 2250], [450, 2216], [560, 2258], [670, 2220], [760, 2246]]),
   loops: [
-    [230, 96, 44, 50],
-    [346, 90, 46, 52],
-    [700, 96, 42, 48],
-    [812, 88, 46, 52],
-    [74, 812, 24, 24],
-    [946, 862, 26, 26],
-    [700, 1402, 44, 50],
-    [814, 1386, 46, 52],
+    [230, 150, 44, 50],
+    [346, 144, 46, 52],
+    [700, 150, 42, 48],
+    [812, 142, 46, 52],
+    [74, 1890, 24, 24],
+    [946, 1942, 26, 26],
+    [700, 2232, 44, 50],
+    [814, 2214, 46, 52],
   ],
 };
 

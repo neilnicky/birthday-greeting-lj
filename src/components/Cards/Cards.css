@@ -25,7 +25,7 @@
   z-index: 10;
 
   /* The card sits slightly below centre, the way a letter rests in the pocket. */
-  --card-rest: calc(-50% + var(--card-offset-y, 5) * var(--v));
+  --card-rest: calc(-50% + var(--card-offset-y) * var(--v));
 
   /* Entrance: slides up out of the envelope and settles. */
   opacity: 0;
@@ -990,10 +990,8 @@
    Portrait — stack the side-by-side cards
    ═══════════════════════════════════════════════════════════ */
 @media (orientation: portrait) {
-  .card {
-    width: calc(84 * var(--u));
-    height: calc(80 * var(--v));
-  }
+  /* Card size comes from --card-w / --card-h, which Stage.css already resolves
+     per orientation — overriding it here would desync it from the frame. */
 
   .birthday-card__heading { top: calc(26 * var(--v)); }
   .birthday-card__line-1,

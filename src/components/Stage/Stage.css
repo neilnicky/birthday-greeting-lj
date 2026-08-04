@@ -22,14 +22,30 @@
 
   --u: calc(var(--stage-w) / 100);
   --v: calc(var(--stage-h) / 100);
+
+  /* Card box, resolved per orientation for the same reason as --stage-ratio:
+     an inline value from JS would outrank the media query. The frame reads
+     these too, so its pieces stay glued to the card's edges. */
+  --card-w: var(--card-w-landscape, 76);
+  --card-h: var(--card-h-landscape, 84);
+  --card-offset-y: var(--card-offset-y-landscape, 5);
 }
 
 @supports (height: 100svh) {
   :root { --vp-h: 100svh; }
 }
 
+/* Portrait: the stage IS the viewport. Letterboxing a fixed ratio here would
+   float the card in the middle of the screen, away from the flap and pocket
+   that are pinned to the viewport's edges. */
 @media (orientation: portrait) {
-  :root { --stage-ratio: var(--stage-ratio-portrait, 0.66); }
+  :root {
+    --stage-w: 100vw;
+    --stage-h: var(--vp-h);
+    --card-w: var(--card-w-portrait, 84);
+    --card-h: var(--card-h-portrait, 92);
+    --card-offset-y: var(--card-offset-y-portrait, 2);
+  }
 }
 
 /* ── The box itself ── */
@@ -93,43 +109,49 @@
 
 /* ═══════════════════════════════════════════════════════════
    Envelope frame — fixed overlay that stays put while cards
-   scroll behind it. Shares the stage box so it always registers
-   with the card underneath.
+   scroll behind it. Pinned to the viewport's own edges, so the
+   flap and pocket read as the frame of the screen at every size.
    ═══════════════════════════════════════════════════════════ */
 .frame {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: var(--stage-w);
-  height: var(--stage-h);
+  inset: 0;
   /* Above .closed-envelope so the seal rides on top of the sealed sheet and
      can travel continuously from its centre to the top of the screen. */
   z-index: 50;
   pointer-events: none;
+
+  /* Gap between the viewport's bottom edge and the card's bottom edge. The card
+     is centred in a viewport-height scene, so this is half the viewport minus
+     half the card, plus the card's downward offset. */
+  --card-bottom-gap: calc(50% - (var(--card-h) / 2 + var(--card-offset-y)) * var(--v));
 }
 
-/* Top flap tips — the wedge peeking out from behind the seal. */
+/* Top flap tips — the wedge peeking out from behind the seal, hung from the
+   viewport's top edge. Both dimensions are in --u: mixing --u and --v is what
+   broke portrait, since the two units decouple when the stage ratio flips and a
+   wedge tuned for 16:10 ballooned on a phone. */
 .frame__flap-tips {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(38 * var(--u));
-  height: calc(11 * var(--v));
+  width: calc(var(--flap-w, 38) * var(--u));
+  height: calc(var(--flap-rise, 7) * var(--u));
   background: var(--envelope-red);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   opacity: 0;
   transition: opacity 0.5s ease 0.35s;
 }
 
-/* Bottom pocket — the two rising corners of the envelope front. */
+/* Bottom pocket — the two rising corners of the envelope front. Pinned to the
+   viewport's bottom edge, and tall enough to still cut across the card's bottom
+   corners by --pocket-rise however much felt sits below the card. */
 .frame__pocket {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: calc(var(--pocket-h, 30) * var(--v));
+  height: calc(var(--card-bottom-gap) + var(--pocket-rise, 19) * var(--u));
   opacity: 0;
   transition: opacity 0.5s ease 0.35s;
 }
@@ -158,14 +180,14 @@
    Wax seal — travels from screen centre (closed) to the top
    edge (open) and then stays pinned there for every section.
    ═══════════════════════════════════════════════════════════ */
-/* The reference seal is a wide oval, not a circle, so width and height are set
-   independently and the artwork is allowed to stretch to fill. */
+/* Sized on the width axis only, so the seal keeps one size relative to the
+   stage in both orientations. */
 .seal {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: calc(33 * var(--u));
-  height: calc(32 * var(--v));
+  width: calc(var(--seal-size-closed, 20) * var(--u));
+  height: calc(var(--seal-size-closed, 20) * var(--u));
   transform: translate(-50%, -50%);
   padding: 0;
   border: none;
@@ -194,14 +216,15 @@
    chain — the reference's own cast shadow was neutral grey and got keyed out. */
 .seal img {
   object-fit: contain;
-  filter: drop-shadow(0 calc(0.5 * var(--v)) calc(0.7 * var(--v)) rgba(0, 0, 0, 0.42));
+  filter: drop-shadow(0 calc(0.35 * var(--u)) calc(0.45 * var(--u)) rgba(0, 0, 0, 0.42));
 }
 .seal__inner { width: 100%; height: 100%; }
 
+/* Open: pinned to the viewport's top edge, riding over the flap wedge. */
 .seal.is-open {
-  top: calc(var(--seal-top, 1) * var(--v));
-  width: calc(var(--seal-width, 28) * var(--u));
-  height: calc(var(--seal-height, 27) * var(--v));
+  top: calc(var(--seal-top, 0.6) * var(--u));
+  width: calc(var(--seal-size, 17) * var(--u));
+  height: calc(var(--seal-size, 17) * var(--u));
   transform: translate(-50%, 0);
   cursor: default;
 }
@@ -233,12 +256,16 @@
   inset: 0;
   z-index: 45;
   background: var(--envelope-red);
-  transition: opacity 0.55s ease 0.42s, visibility 0s linear 0.97s;
+  /* Closing: the sheet must come back at once so the flap is seen folding down
+     over it, then the fade catches up. */
+  transition: opacity 0.45s ease 0.1s, visibility 0s linear 0s;
 }
 .closed-envelope.is-open {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  /* Opening: hold visibility until the fold and the fade have both finished. */
+  transition: opacity 0.55s ease 0.42s, visibility 0s linear 0.97s;
 }
 
 .closed-envelope__flap {

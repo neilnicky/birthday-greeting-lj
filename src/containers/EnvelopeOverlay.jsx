@@ -8,11 +8,16 @@ import { EnvelopeFrame } from '../components/Stage/EnvelopeFrame';
 // that covers the page on load, and the frame (pocket + seal) that stays
 // pinned once it opens. Open state is held by App because the frame outlives
 // the first screen.
-export function EnvelopeOverlay({ isOpen, onOpen }) {
+export function EnvelopeOverlay({ isOpen, onOpen, onClose }) {
   const { emit } = useParticles();
 
   const handleSealClick = useCallback(() => {
-    if (isOpen) return;
+    // Re-sealing gets no sparkle burst — that flourish reads as a celebration,
+    // which is the wrong note for putting the card away.
+    if (isOpen) {
+      onClose();
+      return;
+    }
 
     if (config.effects.particles) {
       emit({
@@ -31,7 +36,7 @@ export function EnvelopeOverlay({ isOpen, onOpen }) {
     }
 
     onOpen();
-  }, [isOpen, emit, onOpen]);
+  }, [isOpen, emit, onOpen, onClose]);
 
   return (
     <>
@@ -40,6 +45,7 @@ export function EnvelopeOverlay({ isOpen, onOpen }) {
         isOpen={isOpen}
         onSealClick={handleSealClick}
         sealAriaLabel={config.envelope.sealAriaLabel}
+        sealCloseAriaLabel={config.envelope.sealCloseAriaLabel}
         sealSrc={config.assets.seal}
         goldLight={config.theme.goldLight}
         gold={config.theme.gold}

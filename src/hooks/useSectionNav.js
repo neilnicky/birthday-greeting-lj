@@ -13,12 +13,16 @@ function sectionNodes() {
 // Televisions have no scroll wheel: remotes emit arrow keys and Enter, which is
 // what this maps. Autoplay walks the sections on a timer and cancels for good
 // on the first sign of a real person (key, wheel, pointer, touch).
+//
+// Escape is handled here rather than in a listener of its own: this effect
+// already owns a keydown handler gated on the same `enabled` flag.
 export function useSectionNav({
   activeIndex,
   count,
   enabled = true,
   autoplay = { enabled: false, sectionMs: 8000, startAfterOpen: true },
   isOpen = false,
+  onEscape,
 }) {
   const activeRef = useRef(activeIndex);
   activeRef.current = activeIndex;
@@ -73,12 +77,15 @@ export function useSectionNav({
       } else if (event.key === 'End') {
         event.preventDefault();
         goTo(countRef.current - 1);
+      } else if (event.key === 'Escape' && onEscape) {
+        event.preventDefault();
+        onEscape();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, step, goTo]);
+  }, [enabled, step, goTo, onEscape]);
 
   // ── Autoplay ──
   useEffect(() => {

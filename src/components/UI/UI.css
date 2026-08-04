@@ -52,19 +52,19 @@
 }
 .section-dots__dot::before {
   content: '';
-  width: calc(0.9 * var(--u));
-  height: calc(0.9 * var(--u));
-  min-width: 8px;
-  min-height: 8px;
+  width: calc(0.45 * var(--u));
+  height: calc(0.45 * var(--u));
+  min-width: 5px;
+  min-height: 5px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.42);
-  box-shadow: 0 0 0 calc(0.14 * var(--u)) rgba(0, 0, 0, 0.18);
+  box-shadow: 0 0 0 calc(0.1 * var(--u)) rgba(0, 0, 0, 0.18);
   transition: transform 0.25s ease, background-color 0.25s ease;
 }
 .section-dots__dot:hover::before { background: rgba(255, 255, 255, 0.75); }
 .section-dots__dot.is-active::before {
   background: var(--gold-light);
-  transform: scale(1.7);
+  transform: scale(1.4);
 }
 .section-dots__dot:focus-visible {
   outline: calc(0.3 * var(--u)) solid var(--gold-light);
